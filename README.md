@@ -7,6 +7,9 @@ This repository contains two deliberately separate parts:
 
 `openapi.yaml` is the interface contract and source of truth.
 
+Status: all acceptance tests in `ACCEPTANCE.md` (A1-A13) pass; `./run-tests.sh` runs clean
+twice in a row from a fresh SQLite database.
+
 ## Requirements
 
 - Python 3.10+
