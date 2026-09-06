@@ -4,5 +4,7 @@ __pycache__/
 *.py[cod]
 instance/*.sqlite3
 instance/*.db
+**/instance/*.sqlite3
+**/instance/*.db
 .coverage
 .claude/

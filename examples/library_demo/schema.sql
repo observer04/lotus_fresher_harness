@@ -1,0 +1,15 @@
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE books (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    author TEXT NOT NULL,
+    available INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE loans (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    book_id INTEGER NOT NULL REFERENCES books(id),
+    borrower TEXT NOT NULL,
+    status TEXT NOT NULL CHECK (status IN ('BORROWED', 'RETURNED'))
+);

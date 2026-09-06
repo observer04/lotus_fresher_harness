@@ -1,0 +1,128 @@
+openapi: 3.0.3
+info:
+  title: Library Lending API
+  version: "1.0.0"
+  description: >-
+    A second, unrelated domain used only to prove that harness/ is genuinely
+    reusable: it contains no Restaurant vocabulary and is not modified here.
+paths:
+  /books:
+    get:
+      operationId: listBooks
+      summary: List all books
+      responses:
+        "200":
+          description: Books
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [books]
+                properties:
+                  books:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Book"
+  /loans:
+    post:
+      operationId: createLoan
+      summary: Borrow a book
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [book_id, borrower]
+              properties:
+                book_id:
+                  type: integer
+                borrower:
+                  type: string
+      responses:
+        "201":
+          description: Loan created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Loan"
+        "404":
+          description: Book not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Book unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /loans/{id}/return:
+    patch:
+      operationId: returnLoan
+      summary: Return a borrowed book
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Loan returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Loan"
+        "404":
+          description: Loan not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Loan already returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Book:
+      type: object
+      required: [id, title, author, available]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        author:
+          type: string
+        available:
+          type: boolean
+    Loan:
+      type: object
+      required: [id, book_id, borrower, status]
+      properties:
+        id:
+          type: integer
+        book_id:
+          type: integer
+        borrower:
+          type: string
+        status:
+          type: string
+          enum: [BORROWED, RETURNED]
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
