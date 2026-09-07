@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from jsonschema import Draft7Validator, RefResolver
+from jsonschema import Draft7Validator
 
 
 @dataclass
@@ -227,8 +227,11 @@ class OpenAPIContract:
     def _validate_json(self, value: Any, schema: dict[str, Any], operation_id: str, phase: str) -> None:
         schema_copy = self._jsonschema_compatible(copy.deepcopy(schema))
         root_copy = self._jsonschema_compatible(copy.deepcopy(self.spec))
-        resolver = RefResolver.from_schema(root_copy)
-        validator = Draft7Validator(schema_copy, resolver=resolver)
+        # Validate through the OpenAPI root so local references in the selected
+        # schema (for example, ``#/components/schemas/Foo``) retain their scope.
+        root_copy["x-harness-validation-schema"] = schema_copy
+        root_copy["$ref"] = "#/x-harness-validation-schema"
+        validator = Draft7Validator(root_copy)
         errors = sorted(validator.iter_errors(value), key=lambda e: list(e.path))
         if errors:
             err = errors[0]

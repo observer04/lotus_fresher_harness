@@ -49,7 +49,7 @@ def validate_openapi_file(path: str | Path, require_library: bool = False) -> di
         raise OpenAPIValidationError(f"YAML parse failed: {exc}") from exc
     _basic_checks(spec)
     try:
-        from openapi_spec_validator import validate_spec
+        from openapi_spec_validator import validate
     except ImportError:
         if require_library:
             raise OpenAPIValidationError(
@@ -57,7 +57,7 @@ def validate_openapi_file(path: str | Path, require_library: bool = False) -> di
             )
     else:
         try:
-            validate_spec(spec)
+            validate(spec)
         except Exception as exc:
             raise OpenAPIValidationError(f"OpenAPI validation failed: {exc}") from exc
     return spec
